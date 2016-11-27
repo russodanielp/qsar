@@ -23,7 +23,7 @@ class TestPubChemDataSet:
         assert all(df.loc[active_compounds, 'Activity'] == 1)
         assert all(df.loc[inactive_compounds, 'Activity'] == 0)
 
-    @skiptest
+
     def test_PubChemDataSet_load(self):
         """ testing PubChemDataSet load """
 

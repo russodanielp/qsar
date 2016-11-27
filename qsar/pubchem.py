@@ -4,6 +4,7 @@ Module containing the class to get active and inactive compounds from PubChem
 """
 from urllib import request, error
 import pandas as pd
+import os
 import logging
 
 
@@ -19,8 +20,17 @@ class PubChemDataSet:
 
 
     def load(self):
+        if not os.getenv('QSAR_DATA', None):
+            raise Exception('No QSAR_DATA envirotnmental variable.'
+                            'Please make a folder named QSAR_DATA and'
+                            'set the path as an environmental variable.')
+
+        path = os.getenv('QSAR_DATA') + 'aid_{0}.csv'.format(self.aid)
+        if os.path.exists(path):
+            return pd.read_csv(path, index_col=0)
         df = self.get_compounds()
         df['SMILES'] = self.get_smiles_from_cids(df.index.tolist())
+        df.to_csv(path)
         return df
 
 
@@ -32,8 +42,7 @@ class PubChemDataSet:
         classes.extend([0] * len(inactives))
         return pd.DataFrame(classes,
                             index=actives + inactives,
-                            columns=['Activity']
-                            )
+                            columns=['Activity'])
 
     def get_smiles_from_cids(self, cids: list) -> list:
         """ get smiles from a given list of cids """
