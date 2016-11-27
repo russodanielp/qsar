@@ -29,7 +29,11 @@ class StructureCleaner(PubChemDataSetStep):
     """ class that drops any compound whose structure does not result in a rdkit mol """
 
     def runStep(self, ds):
-        not_none = ds.rdkit != None
+        # converts rdkit mols back to smiles to see if it results in actual smiles string
+        ds_copy = ds.copy()
+        ds_copy['rdkit_checker'] = [Chem.MolToSmiles(mol) if mol else None for mol in ds_copy.rdkit]
+        not_none = ~ds_copy.rdkit_checker.isnull()
+        print(False in not_none)
         return ds[not_none]
 
 class ActivityBalancer(PubChemDataSetStep):

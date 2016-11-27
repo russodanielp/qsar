@@ -9,13 +9,16 @@ class TestDescriptors:
         """
         self.ds = PubChemDataSet(1).clean_load()
 
+
     def teardown(self):
         pass
 
     def test_rdkit_descriptors(self):
         """ testing rdkit descriptors load """
 
+        print(self.ds.rdkit.tolist())
         descriptors = PubChemDataSetDescriptors(self.ds)
         rdkit_X = descriptors.load_rdkit()
+        assert False
         assert 'HeavyAtomCount' in rdkit_X.columns
 

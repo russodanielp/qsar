@@ -1,4 +1,5 @@
 from qsar.pubchem import PubChemDataSet
+from rdkit import Chem
 from tests import skiptest
 
 
@@ -41,4 +42,4 @@ class TestPubChemDataSet:
 
         df = PubChemDataSet(1).clean_load()
         assert len((df.Activity[df.Activity == 1])) == len((df.Activity[df.Activity == 0]))
-        assert None not in df.rdkit
+        assert None not in [Chem.MolToSmiles(mol) if mol else None for mol in df.rdkit]
