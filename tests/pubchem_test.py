@@ -32,7 +32,13 @@ class TestPubChemDataSet:
                   'C1=CC=C(C=C1)CCCC(=O)O']
 
         df = PubChemDataSet(1).load()
-        print(df)
         for smi in smiles:
             print(smi in df.SMILES.tolist())
             assert smi in df.SMILES.tolist()
+
+    def test_PubChemDataSet_clean_load(self):
+        """ testing a clean loaded dataset """
+
+        df = PubChemDataSet(1224861).clean_load()
+        assert len((df.Activity[df.Activity == 1])) == 25
+        assert len((df.Activity[df.Activity == 0])) == 25

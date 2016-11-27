@@ -3,6 +3,7 @@ Module containing the class to get active and inactive compounds from PubChem
 
 """
 from urllib import request, error
+from .cleaner import ActivityBalancer, PubChemDataSetCleaner
 import pandas as pd
 import os
 import logging
@@ -19,7 +20,16 @@ class PubChemDataSet:
         self.BASE = 'http://pubchem.ncbi.nlm.nih.gov/rest/pug/'
 
 
+    def clean_load(self, steps=[ActivityBalancer()]):
+        """ loads a Raw PubChemDataSet """
+        df = self.load()
+        pipe = PubChemDataSetCleaner(steps=[ActivityBalancer()])
+        df= pipe.run(df)
+        return df
+
+
     def load(self):
+        """ loads a Raw PubChemDataSet """
         if not os.getenv('QSAR_DATA', None):
             raise Exception('No QSAR_DATA envirotnmental variable.'
                             'Please make a folder named QSAR_DATA and'
