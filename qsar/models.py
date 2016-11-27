@@ -29,7 +29,8 @@ def CreateQSARClassifcationModel(classifier):
         """ Class that inherits properties of sklearn classifiers """
 
         def __init__(self):
-            super().__init__()
+            params = classifier().get_params()
+            classifier.__init__(self, **params)
 
         def __str__(self):
             return "<QSAR Model>"
@@ -40,7 +41,7 @@ def CreateQSARClassifcationModel(classifier):
     # returns an instance of an QSARClassificationModel
     # not sure if it is more pythonic to find a way
     # to return an uninstantiated object
-    return QSARClassificationModel()
+    return QSARClassificationModel
 
 
 # #

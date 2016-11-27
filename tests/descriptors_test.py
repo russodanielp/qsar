@@ -19,6 +19,5 @@ class TestDescriptors:
         print(self.ds.rdkit.tolist())
         descriptors = PubChemDataSetDescriptors(self.ds)
         rdkit_X = descriptors.load_rdkit()
-        assert False
         assert 'HeavyAtomCount' in rdkit_X.columns
 

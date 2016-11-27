@@ -33,7 +33,6 @@ class StructureCleaner(PubChemDataSetStep):
         ds_copy = ds.copy()
         ds_copy['rdkit_checker'] = [Chem.MolToSmiles(mol) if mol else None for mol in ds_copy.rdkit]
         not_none = ~ds_copy.rdkit_checker.isnull()
-        print(False in not_none)
         return ds[not_none]
 
 class ActivityBalancer(PubChemDataSetStep):
