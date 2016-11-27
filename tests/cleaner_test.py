@@ -1,4 +1,5 @@
-from qsar.cleaner import PubChemDataSetCleaner, ActivityBalancer
+from qsar.cleaner import PubChemDataSetCleaner, ActivityBalancer, \
+                            StructureCleaner
 from qsar.pubchem import PubChemDataSet
 from tests import skiptest
 
@@ -21,3 +22,10 @@ class TestPubChemDataSetCleaner:
         ds = pipe.run(self.ds)
         assert len((ds.Activity[ds.Activity == 1])) == 25
         assert len((ds.Activity[ds.Activity == 0])) == 25
+
+    def test_StructureChecker_cleaner(self):
+        """ testing structure checker """
+        ds = PubChemDataSet(1).load()
+        pipe = PubChemDataSetCleaner(steps=[StructureCleaner()])
+        ds = pipe.run(ds)
+        assert None not in ds.rdkit.values

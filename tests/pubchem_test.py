@@ -39,6 +39,6 @@ class TestPubChemDataSet:
     def test_PubChemDataSet_clean_load(self):
         """ testing a clean loaded dataset """
 
-        df = PubChemDataSet(1224861).clean_load()
-        assert len((df.Activity[df.Activity == 1])) == 25
-        assert len((df.Activity[df.Activity == 0])) == 25
+        df = PubChemDataSet(1).clean_load()
+        assert len((df.Activity[df.Activity == 1])) == len((df.Activity[df.Activity == 0]))
+        assert None not in df.rdkit

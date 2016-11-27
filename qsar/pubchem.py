@@ -3,7 +3,7 @@ Module containing the class to get active and inactive compounds from PubChem
 
 """
 from urllib import request, error
-from .cleaner import ActivityBalancer, PubChemDataSetCleaner
+from .cleaner import PubChemDataSetCleaner, ActivityBalancer, StructureCleaner
 import pandas as pd
 import os
 import logging
@@ -20,11 +20,11 @@ class PubChemDataSet:
         self.BASE = 'http://pubchem.ncbi.nlm.nih.gov/rest/pug/'
 
 
-    def clean_load(self, steps=[ActivityBalancer()]):
+    def clean_load(self, steps=[StructureCleaner(), ActivityBalancer()]):
         """ loads a Raw PubChemDataSet """
         df = self.load()
-        pipe = PubChemDataSetCleaner(steps=[ActivityBalancer()])
-        df= pipe.run(df)
+        pipe = PubChemDataSetCleaner(steps=steps)
+        df = pipe.run(df)
         return df
 
 

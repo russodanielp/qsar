@@ -25,6 +25,13 @@ class PubChemDataSetStep:
     def runStep(self, ds):
         raise NotImplementedError("Please implement this method")
 
+class StructureCleaner(PubChemDataSetStep):
+    """ class that drops any compound whose structure does not result in a rdkit mol """
+
+    def runStep(self, ds):
+        not_none = ds.rdkit != None
+        return ds[not_none]
+
 class ActivityBalancer(PubChemDataSetStep):
     """ class that balances active:inactive ratio """
 
