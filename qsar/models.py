@@ -45,8 +45,7 @@ class SKLearnModels:
             'kNN__leaf_size': np.linspace(1,100, 10).tolist(),
             'kNN__metric': ['euclidean', 'manhattan',
                        'chebyshev', 'minkowski',
-                       'wminkowski', 'seuclidean',
-                       'mahalanobis'],
+                       'seuclidean', 'mahalanobis'],
             'kNN__p': [1, 2],
             'kNN__n_jobs': [-1]
         }
