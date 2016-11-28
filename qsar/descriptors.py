@@ -6,7 +6,10 @@ import pandas as pd
 
 
 class PubChemDataSetDescriptors:
-    """ a class to get descriptors from a PubChemDataSet object """
+    """ a class to get descriptors from a dataset dataframe
+
+     ds should be a pandas DataFrame with a column labeled smiles
+     """
 
     def __init__(self, ds):
         self.ds = ds

@@ -30,6 +30,11 @@ class Profile:
             return Profile(profile, self.activity[profile.index], self.smiles[profile.index])
         return Profile(sub_profile, self.activity, self.smiles)
 
+
+    def as_ds(self):
+        """ rerturns a DataFrame of activity and smiles in columns """
+        return pd.concat([self.activity, self.smiles], axis=1)
+
     def remove_nulls(self, profile):
         """ remove compounds with no response in any aid """
         return profile[(profile != 0).any(1)]
