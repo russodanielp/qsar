@@ -26,7 +26,7 @@ class SKLearnModels:
         ('Random Forest', RandomForestClassifier()),
         #('Support Vector Classification', SVC()),
         #('Naive-Bayes', GaussianNB()),
-        ('kNN', KNeighborsClassifier())
+        #('kNN', KNeighborsClassifier())
 
     )
 

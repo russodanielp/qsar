@@ -1,7 +1,7 @@
 from qsar.pubchem import PubChemDataSet
 from qsar.descriptors import PubChemDataSetDescriptors
 from qsar.models import SKLearnModels
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 import numpy as np
 
@@ -14,12 +14,19 @@ def main():
             y = ds.Activity
             X = PubChemDataSetDescriptors(ds).load_rdkit()
 
+            # TODO: put this into a cleaner step
+            # remove null values
             y = y[X.notnull().all(1)]
             X = X[X.notnull().all(1)]
 
+            # TODO: put this into a cleaner step
+            # remove null values
             y = y[~np.isinf(X.values).any(1)]
             X = X[~np.isinf(X.values).any(1)]
-            print("building model for aid {0}".format(aid))
+            print("=======building model for aid {0}=======".format(aid))
+            print("======={0} compounds: {1} active, {2} inactive=======".format(y.shape[0],
+                                                                                 (y == 1).sum(),
+                                                                                 (y == 0).sum()))
         except:
             print("error on aid {0}".format(aid))
             continue
