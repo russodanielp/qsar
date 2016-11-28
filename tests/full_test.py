@@ -3,6 +3,11 @@ from qsar.descriptors import PubChemDataSetDescriptors
 from qsar.models import CreateQSARClassifcationModel, SKLearnModels
 from sklearn.grid_search import GridSearchCV
 
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score
+
+import numpy as np
+
 class TestFull:
 
 
@@ -10,22 +15,36 @@ class TestFull:
         self.ds = PubChemDataSet(1).clean_load()
         self.y = self.ds.Activity
         self.X = PubChemDataSetDescriptors(self.ds).load_rdkit()
+        #print(self.X.shape, self.y.shape)
+
+        self.y = self.y[self.X.notnull().all(1)]
+        self.X =  self.X[self.X.notnull().all(1)]
+        #print(self.X.shape, self.y.shape)
+
+        self.y = self.y[~np.isinf(self.X.values).any(1)]
+        self.X = self.X[~np.isinf(self.X.values).any(1)]
+        #print(self.X.shape, self.y.shape)
+
+
 
     def teardown(self):
         pass
 
     def test_full_pipeline(self):
-        models = [CreateQSARClassifcationModel(clf)
-                  for clf, _ in SKLearnModels.CLASSIFIERS]
 
-        rf = models[0]
-        parameters = {
-            'n_estimators': [200, 700],
-            'max_features': ['auto', 'sqrt', 'log2'],
-            'n_jobs':[-1]
-        }
+        pipe = Pipeline(list(SKLearnModels.PREPROCESS))
 
-        clf = GridSearchCV(rf, parameters)
-        clf.fit(self.X, self.y)
-        print(clf.best_params_)
+
+        classifier = SKLearnModels.CLASSIFIERS[0]
+        pipe.steps.append(classifier)
+        parameters = SKLearnModels.PARAMETERS[classifier[0]]
+
+        cv_search = GridSearchCV(pipe,
+                           parameters,
+                           cv=5,
+                           scoring='accuracy',
+                           n_jobs=-1,
+                           verbose=0)
+        cv_search.fit(self.X.values, self.y.values)
+        print(cv_search.best_params_, cv_search.best_score_)
         assert False

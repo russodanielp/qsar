@@ -3,8 +3,12 @@ from sklearn.base import ClassifierMixin, BaseEstimator
 from sklearn.ensemble.forest import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn import base
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+import numpy as np
 
 import logging
 
@@ -12,11 +16,42 @@ log = logging.getLogger(__name__)
 
 class SKLearnModels:
 
-    CLASSIFIERS = (
-        (RandomForestClassifier, 'Random Forest'),
-        (SVC, 'Support Vector Classification'),
-        (GaussianNB, 'Naive-Bayes')
+    PREPROCESS = (
+        ('scaler', MinMaxScaler(feature_range=[0, 1])),
+        ('variance', VarianceThreshold()),
+        ('selectKbest', SelectKBest(chi2, k=10))
     )
+
+    CLASSIFIERS = (
+        ('Random Forest', RandomForestClassifier()),
+        #('Support Vector Classification', SVC()),
+        #('Naive-Bayes', GaussianNB()),
+        ('kNN', KNeighborsClassifier())
+
+    )
+
+    PARAMETERS = {
+        'Random Forest':{
+            'Random Forest__n_estimators': [10, 20, 30, 40, 50, 100, 200, 500, 700],
+            'Random Forest__max_features': ['auto', 'sqrt', 'log2', None],
+            'Random Forest__criterion': ['gini', 'entropy'],
+            'Random Forest__n_jobs': [-1]
+
+        },
+        'kNN':{
+            'kNN__n_neighbors': [1, 2, 3, 4, 5],
+            'kNN__weights': ['uniform', 'distance'],
+            'kNN__algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'],
+            'kNN__leaf_size': np.linspace(1,100, 10).tolist(),
+            'kNN__metric': ['euclidean', 'manhattan',
+                       'chebyshev', 'minkowski',
+                       'wminkowski', 'seuclidean',
+                       'mahalanobis'],
+            'kNN__p': [1, 2],
+            'kNN__n_jobs': [-1]
+        }
+
+    }
 
     DESCRIPTORS = (
         'Rdkit'
