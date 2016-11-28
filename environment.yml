@@ -1,4 +1,8 @@
 name: qsar
+channels:
+- rdkit
+- mwojcikowski
+- defaults
 dependencies:
 - bzip2=1.0.6=vc14_3
 - mkl=11.3.3=1
@@ -6,8 +10,8 @@ dependencies:
 - numpy=1.11.2=py35_0
 - pip=9.0.1=py35_0
 - python=3.5.2=0
-- rdkit::boost=1.59.0=py35_3
-- rdkit::rdkit=2016.03.1=np111py35_1
+- boost=1.59.0=py35_3
+- rdkit=2016.03.1=np111py35_1
 - scikit-learn=0.18.1=np111py35_0
 - scipy=0.18.1=np111py35_0
 - setuptools=27.2.0=py35_1
