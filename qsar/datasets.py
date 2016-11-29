@@ -35,6 +35,14 @@ class Profile:
         """ rerturns a DataFrame of activity and smiles in columns """
         return pd.concat([self.activity, self.smiles], axis=1)
 
+    def get_nulls(self):
+        """ return Profile object with compounds that have no responses in all aids
+            This will come in handy for getting compounds with no activity to make predictions on
+
+        """
+        profile = self.profile[(self.profile == 0).all(1)]
+        return Profile(profile, self.activity[profile.index], self.smiles[profile.index])
+
     def remove_nulls(self, profile):
         """ remove compounds with no response in any aid """
         return profile[(profile != 0).any(1)]

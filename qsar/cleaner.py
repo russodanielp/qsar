@@ -4,6 +4,7 @@ import pandas as pd
 
 log = logging.getLogger(__name__)
 
+
 class PubChemDataSetCleaner:
     """ pipeline class for cleaner """
 
