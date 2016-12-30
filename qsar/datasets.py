@@ -30,6 +30,18 @@ class Profile:
             return Profile(profile, self.activity[profile.index], self.smiles[profile.index])
         return Profile(sub_profile, self.activity, self.smiles)
 
+    def remove_cmps(self, cmps: list):
+        """ return a subset of the Profile minus the specified compounds
+
+        cmps: cmps to remove
+        drop_null: return compounds with no responses
+        """
+        for cmp in cmps:
+            if cmp not in self.profile.index:
+                raise Exception("{0} is not in the profile, "
+                                "AIDs in profile are {1}".format(cmp, self.index.tolist()))
+        indices = ~self.profile.index.isin(cmps)
+        return Profile(self.profile[indices], self.activity[indices], self.smiles[indices])
 
     def as_ds(self):
         """ rerturns a DataFrame of activity and smiles in columns """
@@ -46,6 +58,23 @@ class Profile:
     def remove_nulls(self, profile):
         """ remove compounds with no response in any aid """
         return profile[(profile != 0).any(1)]
+
+    def __add__(self, other):
+        if not isinstance(other, Profile):
+            raise Exception("{0} is not of type Profile".format(other))
+
+        if self.profile.shape[0] != other.profile.shape[0]:
+            raise Exception("Can not add profiles of "
+                            "shape {0} and {1}.  Profiles must"
+                            "be the same and equal along the index."
+                            "".format(self.profile.shape[0], other.profile.shape[0]))
+
+
+        if any(self.profile.index != other.profile.index):
+            raise Exception("Can not add profiles. Profiles must"
+                            "be the same and equal along the index."
+                            "".format(self.profile.shape[0], other.profile.shape[0]))
+        return Profile(pd.concat([self.profile, other.profile], axis=1), self.activity, self.smiles)
 
 class ProfileDataset:
 
@@ -78,6 +107,8 @@ class Datasets(object):
 
     profile_1 = ProfileDataset("profile_1")
     profile_3 = ProfileDataset("profile_3")
+    fp_matrix = ProfileDataset("FP_matrix")
+    fp_matrix_0 = ProfileDataset("FP_matrix_0")
 
     @staticmethod
     def load(ds) -> pd.DataFrame:
