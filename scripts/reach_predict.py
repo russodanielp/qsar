@@ -5,7 +5,7 @@ from qsar.models import SKLearnModels
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 import pandas as pd
-
+import os
 import numpy as np
 
 from rdkit import RDLogger
@@ -24,7 +24,9 @@ def main():
             '9', '131', '125', '97', '29', '121', '3', '25', '141',
             '23', '77', '19', '1', '47', '73', '35', '89', '85']
     aids = list(map(int, aids))
-    profile = DS.profile_3.load()
+    import os
+    ds_test = pd.read_csv(os.getenv('QSAR_DATA')+'reach_curated.csv')
+    ds_test.index = ds_test.ECNumber
     best_models = {}
     predictions = []
     for aid in aids:
@@ -69,7 +71,7 @@ def main():
             print("The best score is {0}".format(cv_search.best_score_))
             best_models[aid] = cv_search.best_estimator_
 
-        ds_test = profile.get_subprofile([aid]).get_nulls().as_ds()
+
         X_test = PubChemDataSetDescriptors(ds_test).load_rdkit()
 
         # save null or inf values
@@ -83,8 +85,11 @@ def main():
         predictions.append(preds)
     print(pd.concat(predictions, axis=1))
     import os
-    filename = os.getenv('QSAR_DATA') + 'missing_data_predictions_cluster_0.csv'
+    filename = os.getenv('QSAR_DATA') + 'reach_predictions_cluster_0.csv'
     pd.concat(predictions, axis=1).to_csv(filename)
+
+    m = pd.DataFrame(best_models, index=aids)
+    m.to_pickle(os.getenv('QSAR_DATA') + 'models.csv')
 
 if __name__ == '__main__':
     main()
