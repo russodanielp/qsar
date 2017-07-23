@@ -21,7 +21,7 @@ def build_models(aid, sub_directory):
     aid_sub_directory = os.path.join(sub_directory, str(aid))
 
     # if its already been modeled move on
-    if os.path.exists('{}/results.csv'.format(aid_sub_directory)):
+    if os.path.exists(aid_sub_directory):
         return
     else:
         os.mkdir(aid_sub_directory)
@@ -63,11 +63,11 @@ def build_models(aid, sub_directory):
             results_file.write(model + ',' + str(score) + '\n')
 
 
-def main(aids, processes, sub_directory="results"):
+def main(aids, sub_directory="results"):
     print("Building models for {} aids".format(len(aids)))
-    pool = multiprocessing.Pool(processes=processes)
-    f = partial(build_models, sub_directory=sub_directory)
-    pool.map(f, aids)
+
+    for aid in aids:
+        build_models(aid, sub_directory=sub_directory)
 
 
 
