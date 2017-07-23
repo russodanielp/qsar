@@ -2,7 +2,8 @@ from sklearn.base import ClassifierMixin, BaseEstimator
 
 from sklearn.ensemble.forest import RandomForestClassifier
 from sklearn.svm import SVC
-from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import BernoulliNB
+from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_selection import VarianceThreshold
@@ -16,26 +17,30 @@ log = logging.getLogger(__name__)
 
 class SKLearnModels:
 
-    PREPROCESS = (
-        ('scaler', MinMaxScaler(feature_range=[0, 1])),
-        ('variance', VarianceThreshold()),
-        ('selectKbest', SelectKBest(chi2, k=10))
-    )
+    # PREPROCESS = (
+    #     ('scaler', MinMaxScaler(feature_range=[0, 1])),
+    #     ('variance', VarianceThreshold()),
+    #     ('selectKbest', SelectKBest(chi2, k=10))
+    # )
 
+    # TODO whats the deal with calibrated CV
     CLASSIFIERS = (
         ('Random Forest', RandomForestClassifier()),
-        #('Support Vector Classification', SVC()),
-        #('Naive-Bayes', GaussianNB()),
+        ('Support Vector Classification', SVC()),
+        ('Naive Bayes', BernoulliNB()),
+        ('Logistic Regression', LogisticRegression())
         #('kNN', KNeighborsClassifier())
 
     )
 
     PARAMETERS = {
         'Random Forest':{
-            'Random Forest__n_estimators': [10, 20, 30, 40, 50, 100, 200, 500, 700],
+            'Random Forest__n_estimators': [5, 10, 25],
             'Random Forest__max_features': ['auto', 'sqrt', 'log2', None],
+            'Random Forest__max_depth': [5],
             'Random Forest__criterion': ['gini', 'entropy'],
-            'Random Forest__n_jobs': [-1]
+            'Random Forest__n_jobs': [-1],
+            'Random Forest__class_weight': ['balanced'],
 
         },
         'kNN':{
@@ -48,8 +53,19 @@ class SKLearnModels:
                        'seuclidean', 'mahalanobis'],
             'kNN__p': [1, 2],
             'kNN__n_jobs': [-1]
+        },
+        'Support Vector Classification':{
+            'Support Vector Classification__class_weight': ['balanced'],
+            'Support Vector Classification__kernel': ['rbf'],
+            'Support Vector Classification__gamma': [1e-2, 1e-3],
+            'Support Vector Classification__C': [1, 10]
+        },
+        'Logistic Regression':{
+            'Logistic Regression__C': list(np.logspace(-5, -1, 5)),
+        },
+        'Naive Bayes':{
+            'Naive Bayes__alpha': [1]
         }
-
     }
 
     DESCRIPTORS = (

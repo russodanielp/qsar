@@ -1,6 +1,7 @@
 import logging
 from rdkit import Chem
 import pandas as pd
+from rdkit.Chem import AllChem
 
 log = logging.getLogger(__name__)
 
@@ -16,8 +17,7 @@ class PubChemDataSetCleaner:
 
     def run(self, ds):
         ds_copy = ds.copy()
-        ds_copy['rdkit'] = [Chem.MolFromSmiles(smi) if Chem.MolFromSmiles(smi) else None
-                            for smi in ds_copy.SMILES]
+        ds_copy['rdkit'] = [Chem.MolFromSmiles(smi) for smi in ds_copy.SMILES]
         for step in self._steps:
             ds_copy = step.runStep(ds_copy)
         return ds_copy
@@ -32,6 +32,17 @@ class StructureCleaner(PubChemDataSetStep):
     def runStep(self, ds):
         # converts rdkit mols back to smiles to see if it results in actual smiles string
         ds_copy = ds.copy()
+
+        mols = []
+        for idx, mol in ds_copy.rdkit.iteritems():
+            if not mol:
+                mols.append(None)
+            else:
+                try:
+                    AllChem.Compute2DCoords(mol)
+                    mols.append(mol)
+                except:
+                    mols.append(None)
         ds_copy['rdkit_checker'] = [Chem.MolToSmiles(mol) if mol else None for mol in ds_copy.rdkit]
         not_none = ~ds_copy.rdkit_checker.isnull()
         return ds[not_none]
